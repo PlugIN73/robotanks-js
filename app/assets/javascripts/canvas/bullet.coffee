@@ -1,8 +1,8 @@
-class window.Tank
+class window.Bullet
   constructor: (options) ->
     @id = options.id
-    @width = options.width
-    @height = options.height
+    @width = 5
+    @height = 5
     @x = options.x
     @y = options.y
     @angle = options.angle
