@@ -12,8 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require ocanvas-2.4.0
+
 //= require definitions
 //= require websockets/connection
 //= require events
-//= require ocanvas-2.4.0
 //= require_tree .
