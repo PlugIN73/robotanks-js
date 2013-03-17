@@ -7,6 +7,7 @@ class window.Tank
     @y = options.y
     @angle = options.angle
     @need_draw = 1
+    @name = options.name
 
   set_center: (x, y) ->
     @x = x;

@@ -3,7 +3,6 @@ function move_bullet(bullet) {
     var x = bullet.x - bullet.width / 2;
     var y = bullet.y - bullet.height / 2;
     var path = "X = " + x + ' Y = ' + y + " Angle = " + bullet.angle;
-    console.log(path);
     bullet["object"].rotateTo(-bullet.angle);
     bullet["object"].moveTo(x, y);
     bullet.need_draw = 0;

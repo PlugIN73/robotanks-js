@@ -26,7 +26,7 @@ function bot_connection(){
 
     ws_bot.onopen = function() {
         alert("Bot connection opened...");
-//        ws_bot.send(JSON.stringify({role: "bot"}));
+        ws_bot.send(JSON.stringify({name: $("#name").val()}));
     };
 
     // второй - когда соединено закроется
@@ -72,7 +72,7 @@ function parse_response(data){
 function parse_bots(bots){
     for(var key in bots){
         if (!tanks[bots[key]["id"]]){
-            tanks[bots[key]["id"]] = new Tank({id:bots[key]["id"], width:bots_width, height:bots_height, x:bots[key]["x"], y:bots[key]["y"], angle:bots[key]["angle"]});
+            tanks[bots[key]["id"]] = new Tank({id:bots[key]["id"], width:bots_width, height:bots_height, x:bots[key]["x"], y:bots[key]["y"], angle:bots[key]["angle"], name:bots[key]["name"]});
         }else{
             tanks[bots[key]["id"]].set_center(bots[key]["x"], bots[key]["y"]);
             tanks[bots[key]["id"]].angle = bots[key]["angle"];
@@ -83,6 +83,7 @@ function parse_bots(bots){
 
 function remove_unused_bots(bots){
   var bots_size = bots.length;
+  var explosion;
   if (bots_size == 0){
       for (var key in tanks){
           if (tanks[key]["object"])
@@ -99,10 +100,23 @@ function remove_unused_bots(bots){
           }
           tanks[key].need_draw = 0;
       }
-      if (tanks[key]["object"] && tanks[key].need_draw == 0)
+      if (tanks[key]["object"] && tanks[key].need_draw == 0){
+          explosion = canvas.display.image({
+              x: (tanks[key].x - tanks[key].width / 2),
+              y: (tanks[key].y - tanks[key].height / 2),
+              origin: { x: "center", y: "center" },
+              width: tanks[key].width,
+              height: tanks[key].height,
+              image: "explosion1.png"
+          });
+          canvas.addChild(explosion);
           canvas.removeChild(tanks[key]["object"]);
+      }
       if (tanks[key].need_draw == 0)
           delete tanks[key];
+  }
+  if (explosion){
+      canvas.removeChild(explosion);
   }
 }
 
