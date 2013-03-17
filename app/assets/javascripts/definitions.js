@@ -1,4 +1,5 @@
 var ws;
+var ws_bot;
 
 var canvas = oCanvas.create({ canvas: "#canvas", background: "#222" });
 //var paper = Raphael(document.getElementById("raphael"), 1000, 1000);

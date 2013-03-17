@@ -1,16 +1,16 @@
 function connect(){
-    ws = new WebSocket("ws://192.168.30.197:5555/");
+    ws = new WebSocket("ws://192.168.30.129:5555/");
     // и навешивает на новый объект три колл-бека:
 
     // первый вызовется, когда соединение будет установлено:
     ws.onopen = function() {
-        alert("Connection opened...");
-        send({role: "observer"});
+        alert("Spectrator connection opened...");
+//        ws.send(JSON.stringify({role: "observer"}));
     };
 
     // второй - когда соединено закроется
     ws.onclose = function() {
-        alert("Connection closed...")
+        alert("Spectrator connection closed...")
     };
 
     // и, наконец, третий - каждый раз, когда браузер получает какие-то данные через веб-сокет
@@ -21,12 +21,28 @@ function connect(){
     };
 }
 
-function disconnect(){
-    ws.close();
+function bot_connection(){
+    ws_bot = new WebSocket("ws://192.168.30.129:5556/");
+
+    ws_bot.onopen = function() {
+        alert("Bot connection opened...");
+//        ws_bot.send(JSON.stringify({role: "bot"}));
+    };
+
+    // второй - когда соединено закроется
+    ws_bot.onclose = function() {
+        alert("Bot connection closed...")
+    };
+
+    // и, наконец, третий - каждый раз, когда браузер получает какие-то данные через веб-сокет
+    ws_bot.onmessage = function(evt) {
+        parse_bot_json(evt.data)
+    };
 }
 
-function send(msg){
-    ws.send(msg);
+function disconnect(){
+    ws.close();
+    ws_bot.close();
 }
 
 function parse_response(data){
@@ -66,20 +82,26 @@ function parse_bots(bots){
 }
 
 function remove_unused_bots(bots){
-  var bots_null = true;
+  var bots_size = bots.length;
+  if (bots_size == 0){
+      for (var key in tanks){
+          if (tanks[key]["object"])
+              canvas.removeChild(tanks[key]["object"]);
+          delete tanks[key];
+      }
+      return;
+  }
   for (var key in tanks){
       for (var key_b in bots){
-          bots_null = false;
           if (bots[key_b].id == tanks[key].id){
-              continue;
+              tanks[key].need_draw = 1;
+              break;
           }
           tanks[key].need_draw = 0;
-          break;
       }
-      console.log(tanks);
-      if (tanks[key]["object"] && (tanks[key].need_draw == 0 || bots_null == true))
+      if (tanks[key]["object"] && tanks[key].need_draw == 0)
           canvas.removeChild(tanks[key]["object"]);
-      if (tanks[key].need_draw == 0 || bots_null == true)
+      if (tanks[key].need_draw == 0)
           delete tanks[key];
   }
 }
@@ -97,20 +119,30 @@ function parse_bullets(data){
 }
 
 function remove_unused_bullets(bulls){
-    var bulls_null = true;
+    var bulls_size = bulls.length;
+    if (bulls_size == 0){
+        for (var key in bullets){
+            if (bullets[key]["object"])
+                canvas.removeChild(bullets[key]["object"]);
+            delete bullets[key];
+        }
+        return;
+    }
     for (var key in bullets){
         for (var key_b in bulls){
-            bots_null = false;
             if (bulls[key_b].id == bullets[key].id){
-                continue;
+                bullets[key].need_draw = 1;
+                break;
             }
             bullets[key].need_draw = 0;
-            break;
         }
-        console.log(tanks);
-        if (bullets[key]["object"] && (bullets[key].need_draw == 0 || bulls_null == true))
+        if (bullets[key]["object"] && bullets[key].need_draw == 0)
             canvas.removeChild(bullets[key]["object"]);
-        if (bullets[key].need_draw == 0 || bulls_null == true)
+        if (bullets[key].need_draw == 0)
             delete bullets[key];
     }
+}
+
+function parse_bot_json(data){
+
 }
